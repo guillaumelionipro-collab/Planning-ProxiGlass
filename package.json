@@ -9,9 +9,10 @@
     "preview": "vite preview && start http://localhost:4173",
     "preview:lan": "vite preview --host 0.0.0.0 --port 4173",
     "start": "npm run build && npm run preview"
-  },
-  "engines": {
-    "node": "18.x"
+ "engines": {
+  "node": "20.x"
+}
+
   },
   "dependencies": {
     "date-fns": "^4.1.0",
