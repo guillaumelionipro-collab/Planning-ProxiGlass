@@ -11,7 +11,7 @@
     "start": "npm run build && npm run preview"
   },
   "engines": {
-    "node": ">=20"
+    "node": "20.x"
   },
   "dependencies": {
     "date-fns": "^4.1.0",
