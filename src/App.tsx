@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { format, parseISO, addMinutes } from 'date-fns'
+import Navbar from './Navbar' // <= nouvelle barre de navigation (burger)
 
 type Statut = 'a_confirmer'|'confirme'|'annule'
 type EventItem = {
@@ -135,23 +136,30 @@ export default function App(){
 
   return (
     <>
-      <header>
+      {/* ======= NAVBAR (nouvelle) ======= */}
+      <Navbar />
+
+      {/* ======= HEADER EXISTANT ======= */}
+      <header id="planning" className="toolbar">
         <div className="logo">
           <svg viewBox="0 0 512 160" width="120" aria-label="ProxiGlass">
             <defs>
-              <linearGradient id="pg" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stopColor="#0ea5e9"/><stop offset="100%" stopColor="#ef4444"/></linearGradient>
+              <linearGradient id="pg" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0%" stopColor="#0ea5e9"/><stop offset="100%" stopColor="#ef4444"/>
+              </linearGradient>
             </defs>
             <rect x="24" y="36" width="320" height="56" rx="8" fill="#0f172a" opacity=".08"/>
             <text x="36" y="120" fontFamily="Inter,system-ui,Arial" fontWeight="800" fontSize="48" fill="url(#pg)">ProxiGlass</text>
           </svg>
           <span className="brand">Planning RDV</span>
         </div>
-        <div className="row">
+        <div id="export" className="row">
           <button className="btn" onClick={()=>seedTests(setEvents)}>Données de test</button>
           <button className="btn" onClick={()=>{localStorage.removeItem('pg-events'); setEvents([])}}>Réinitialiser</button>
           <button className="btn" onClick={()=>exportCSV(events)}>Exporter CSV</button>
         </div>
-      </header>
+      </<header >
+>
 
       <div className="container">
         {/* Filtres + Année */}
@@ -242,6 +250,9 @@ export default function App(){
         {tab==='annee' && <YearView year={year} events={events} onPickDay={(d)=>{ setFilterDate(d); setTab('jour') }} />}
         {tab==='jour' && <DayView events={filtered} date={filterDate || format(new Date(), 'yyyy-MM-dd')} onEdit={edit} onDel={del} onMove={moveEvent} />}
         {tab==='liste' && <ListView grouped={grouped} techs={techs} onEdit={edit} onDel={del} />}
+
+        {/* Ancre "Aide" pour le lien de la Navbar */}
+        <div id="aide" style={{marginTop:24}} />
       </div>
     </>
   )
@@ -305,7 +316,7 @@ function toICS(ev: EventItem) {
       'Notes: ' + (ev.notes || ''),
     'END:VEVENT',
     'END:VCALENDAR'
-  ].join('\\r\\n');
+  ].join('\r\n');
   const blob = new Blob([lines], { type: 'text/calendar' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
