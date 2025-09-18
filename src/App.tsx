@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { format, parseISO, addMinutes } from 'date-fns'
-import Navbar from './Navbar' // <= nouvelle barre de navigation (burger)
+import Navbar from './Navbar' // barre de navigation responsive
 
 type Statut = 'a_confirmer'|'confirme'|'annule'
 type EventItem = {
@@ -139,27 +139,20 @@ export default function App(){
       {/* ======= NAVBAR (nouvelle) ======= */}
       <Navbar />
 
-      {/* ======= HEADER EXISTANT ======= */}
+      {/* ======= HEADER AGENDA (logo PNG) ======= */}
       <header id="planning" className="toolbar">
         <div className="logo">
-          <svg viewBox="0 0 512 160" width="120" aria-label="ProxiGlass">
-            <defs>
-              <linearGradient id="pg" x1="0" x2="1" y1="0" y2="0">
-                <stop offset="0%" stopColor="#0ea5e9"/><stop offset="100%" stopColor="#ef4444"/>
-              </linearGradient>
-            </defs>
-            <rect x="24" y="36" width="320" height="56" rx="8" fill="#0f172a" opacity=".08"/>
-            <text x="36" y="120" fontFamily="Inter,system-ui,Arial" fontWeight="800" fontSize="48" fill="url(#pg)">ProxiGlass</text>
-          </svg>
+          {/* Assure-toi d’avoir public/logo.png */}
+          <img src="/logo.png" alt="ProxiGlass" style={{ height: 50 }} />
           <span className="brand">Planning RDV</span>
         </div>
+
         <div id="export" className="row">
           <button className="btn" onClick={()=>seedTests(setEvents)}>Données de test</button>
           <button className="btn" onClick={()=>{localStorage.removeItem('pg-events'); setEvents([])}}>Réinitialiser</button>
           <button className="btn" onClick={()=>exportCSV(events)}>Exporter CSV</button>
         </div>
-      </<header >
->
+      </header>
 
       <div className="container">
         {/* Filtres + Année */}
@@ -198,6 +191,8 @@ export default function App(){
               <button className="btn primary" onClick={save}>{editing ? 'Enregistrer' : 'Ajouter'}</button>
             </div>
           </div>
+
+          {/* 4 colonnes desktop -> 2 (<=1024px) -> 1 (<=768px) géré par CSS */}
           <div className="grid" style={{gridTemplateColumns:'repeat(4, minmax(200px,1fr))'}}>
             <div><label>Titre</label><input value={form.titre} onChange={e=>setForm({...form, titre:e.target.value})} placeholder="Remplacement pare-brise Opel Corsa"/></div>
             <div><label>Service</label>
@@ -251,7 +246,7 @@ export default function App(){
         {tab==='jour' && <DayView events={filtered} date={filterDate || format(new Date(), 'yyyy-MM-dd')} onEdit={edit} onDel={del} onMove={moveEvent} />}
         {tab==='liste' && <ListView grouped={grouped} techs={techs} onEdit={edit} onDel={del} />}
 
-        {/* Ancre "Aide" pour le lien de la Navbar */}
+        {/* Ancre "Aide" pour la Navbar */}
         <div id="aide" style={{marginTop:24}} />
       </div>
     </>
@@ -262,13 +257,12 @@ function groupByDate(evs: EventItem[]){
   return evs.reduce((acc: Record<string, EventItem[]>, ev) => { (acc[ev.date] ||= []).push(ev); return acc }, {})
 }
 
-/* ===== Helpers CSV / ICS (bloc propre) ===== */
+/* ===== Helpers CSV / ICS ===== */
 function csvEscape(v: any) {
   const s = String(v ?? '');
   const needsQuotes = s.includes(',') || s.includes('\n') || s.includes('"');
-  // Compatible ES2019 : pas de replaceAll
   const doubled = s.split('"').join('""');
-  return needsQuotes ? `"${doubled}"` : s;
+  return needsQuotes ? `"${doubled}"` : s.
 }
 
 function exportCSV(events: EventItem[]) {
@@ -327,7 +321,7 @@ function toICS(ev: EventItem) {
   a.remove();
   URL.revokeObjectURL(url);
 }
-/* ===== Fin helpers CSV / ICS ===== */
+/* ===== Fin helpers ===== */
 
 function YearView({ year, events, onPickDay }:{year:number, events:EventItem[], onPickDay:(iso:string)=>void}){
   const byDate: Record<string, number> = {}

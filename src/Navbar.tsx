@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./index.css"; // pour les styles de la navbar
+import "./index.css"; // tes styles globaux
 
 function Navbar() {
   const [open, setOpen] = useState(false);
@@ -9,7 +9,10 @@ function Navbar() {
   return (
     <nav className="nav">
       <div className="nav-inner">
-        <div className="brand">MonSite</div>
+        {/* Logo à gauche */}
+        <div className="brand">
+          <img src="/logo.png" alt="ProxiGlass" style={{ height: 40 }} />
+        </div>
 
         {/* Bouton burger (visible sur mobile) */}
         <button
